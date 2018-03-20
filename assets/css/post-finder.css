@@ -24,11 +24,12 @@
       height: 40px;
       padding: 0.5em 12em 0.5em 0.5em;
       box-sizing: border-box; }
-      .post-finder .list li input[type=text] {
+      .post-finder .list li input[type=text].position {
         position: absolute;
         margin-left: -60px;
         text-align: center;
-        padding: 2px 3px; }
+        padding: 2px 3px;
+        width: auto; }
       .post-finder .list li:last-child {
         margin-bottom: 0; }
     .post-finder .list span {

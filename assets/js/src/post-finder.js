@@ -35,6 +35,8 @@
 
 		var plugin = this;
 
+		plugin.cache = {};
+		plugin.posts = {};
 		plugin.settings = {}; // empty object to store extended settings
 
 		var $element = $( element ); // store jquery object of el
@@ -52,6 +54,14 @@
 			plugin.$results = plugin.$search.find( plugin.settings.resultsSelector );
 			plugin.$query = plugin.$search.find( plugin.settings.querySelector );
 			plugin.nonce = $( plugin.settings.nonceSelector ).val();
+			plugin.posts = _.reduce( $.extend( {}, $element.data( 'posts' ) ), function( result, value ) {
+				result[value.ID] = value;
+				return result;
+			}, {} );
+			plugin.recent = _.reduce( $.extend( {}, $element.data( 'recent' ) ), function( result, value ) {
+				result[value.ID] = value;
+				return result;
+			}, {} );
 
 			// bind select
 			plugin.$select.on( 'change', function() {
@@ -102,14 +112,14 @@
 			} );
 
 			// bind number inputs
-			plugin.$list.on( 'keypress', 'li input', function( e ) {
+			plugin.$list.on( 'keypress', 'li input.position', function( e ) {
 				if ( e.which === 13 ) {
 					e.preventDefault();
 					$( this ).trigger( 'blur' );
 				}
 			} );
 
-			plugin.$list.on( 'blur', 'li input', function() {
+			plugin.$list.on( 'blur', 'li input.position', function() {
 				plugin.moveItem( $( this ).closest( 'li' ), $( this ).val() );
 			} );
 		};
@@ -179,6 +189,12 @@
 				return;
 			}
 
+			if ( plugin.cache[id] ) {
+				plugin.posts[id] = _.clone( plugin.cache[id] );
+			} else if ( plugin.recent[id] ) {
+				plugin.posts[id] = _.clone( plugin.recent[id] );
+			}
+
 			// add item
 			plugin.$list.append( template( {
 				id:        id,
@@ -241,7 +257,9 @@
 					success: function( response ) {
 						if ( typeof response.posts !== 'undefined' ) {
 							if ( response.posts.length > 0 ) {
+								plugin.cache = []; // Remove old posts from cache as it is not required.
 								for ( var i in response.posts ) {
+									plugin.cache[response.posts[ i ].ID] = response.posts[ i ];
 									html += template( response.posts[ i ] );
 								}
 
@@ -274,7 +292,7 @@
 				i = 1;
 
 			plugin.$list.find( 'li' ).each( function() {
-				$( this ).find( 'input' ).val( i );
+				$( this ).find( 'input.position' ).val( i );
 				ids.push( $( this ).data( 'id' ) );
 				types.push( $( this ).data( 'type' ) );
 				i++;

@@ -297,6 +297,15 @@ class NS_Post_Finder {
 			$posts = array();
 		}
 
+        /**
+         * Filters the saved posts.
+         *
+         * @since 0.1.0
+         *
+         * @param array $posts Found posts.
+         */
+        $posts = apply_filters( 'post_finder_current_posts', $posts );
+
 		// if we have some ids already, make sure they aren't included in the recent posts
 		if ( ! empty( $post_ids ) ) {
 			$args['post__not_in'] = $post_ids;
@@ -318,8 +327,17 @@ class NS_Post_Finder {
 
 			wp_reset_postdata();
 		} else {
-			$recent_posts = '';
+			$recent_posts = array();
 		}
+
+        /**
+         * Filters the recent posts.
+         *
+         * @since 0.1.0
+         *
+         * @param array $posts Found posts.
+         */
+        $recent_posts = apply_filters( 'post_finder_recent_posts', $recent_posts );
 
 		$class = 'post-finder';
 
@@ -327,7 +345,10 @@ class NS_Post_Finder {
 			$class .= ' no-numbers';
 		}
 
-		?><div class="<?php echo esc_attr( $class ); ?>" data-limit="<?php echo intval( $options['limit'] ); ?>" data-args='<?php echo wp_json_encode( $args ); ?>'>
+		?><div class="<?php echo esc_attr( $class ); ?>" data-limit="<?php echo intval( $options['limit'] ); ?>" data-args='<?php echo wp_json_encode( $args ); ?>'
+               data-recents='<?php echo wp_json_encode( $recent_posts ); ?>'
+               data-posts='<?php echo wp_json_encode( $posts ); ?>'
+        >
 
 			<?php if ( $recent_posts ) : ?>
 
@@ -380,7 +401,7 @@ class NS_Post_Finder {
 					foreach ( $posts as $post ) {
 						printf(
 							'<li data-id="%1$s">' .
-								'<input type="text" size="3" maxlength="3" max="3" value="%2$s">' .
+								'<input class="position" type="text" size="3" maxlength="3" max="3" value="%2$s">' .
 								'<span>%3$s</span>' .
 								'<nav>' .
 									'<a href="%4$s" class="edit" target="_blank" title="%5$s">%5$s</a>' .

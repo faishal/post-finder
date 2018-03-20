@@ -32,11 +32,12 @@
 			padding: 0.5em 12em 0.5em 0.5em;
 			box-sizing: border-box;
 
-			input[type=text] {
+			input[type=text].position {
 				position: absolute;
 				margin-left: -60px;
 				text-align: center;
 				padding: 2px 3px;
+				width: auto;
 			}
 
 			&:last-child {
