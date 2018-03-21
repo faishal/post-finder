@@ -346,8 +346,8 @@ class NS_Post_Finder {
 		}
 
 		?><div class="<?php echo esc_attr( $class ); ?>" data-limit="<?php echo intval( $options['limit'] ); ?>" data-args='<?php echo wp_json_encode( $args ); ?>'
-               data-recents='<?php echo wp_json_encode( $recent_posts ); ?>'
-               data-posts='<?php echo wp_json_encode( $posts ); ?>'
+               data-recents='<?php echo esc_attr( wp_json_encode( $recent_posts ) ); ?>'
+               data-posts='<?php echo esc_attr( wp_json_encode( $posts ) ); ?>'
         >
 
 			<?php if ( $recent_posts ) : ?>
